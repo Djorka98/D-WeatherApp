@@ -46,7 +46,7 @@ export const WeatherMap = ({ onMapClick }) => {
         <MapContainer
           center={[51.505, -0.09]} // Coordenadas iniciales para centrar el mapa (Londres)
           zoom={3} // Nivel de zoom inicial
-          style={{ height: '400px', width: '100%' }} // Estilos de tamaño del mapa
+          style={{ height: '400px', width: '100%', zIndex: 1 }} // Estilos de tamaño del mapa
           className="my-4" // Clase CSS para espaciado superior e inferior
         >
           {/* Capa de mosaico del mapa proporcionada por OpenStreetMap */}

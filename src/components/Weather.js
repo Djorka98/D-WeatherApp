@@ -244,7 +244,7 @@ export const Weather = () => {
       >{t('weatherApp')}</motion.h1>
 
       {/* Controles de cambio de tema e idioma */}
-      <div className="fixed bottom-4 right-4 flex flex-col justify-between items-center space-y-2 z-10">
+      <div className="fixed bottom-4 right-4 flex flex-col justify-between items-center space-y-2 z-50">
         <motion.button
           onClick={handleThemeToggle}
           className={`p-3 rounded-full shadow-lg transition-colors duration-300 hover:scale-105
@@ -416,7 +416,7 @@ export const Weather = () => {
                   mapRef.current = mapInstance;
                   mapInstance.invalidateSize();
                 }}
-                style={{ height: '400px', width: '100%' }}
+                style={{ height: '400px', width: '100%', zIndex: 1 }}
                 className="my-4"
               >
                 <TileLayer
