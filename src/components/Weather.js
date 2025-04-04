@@ -17,7 +17,6 @@ import { MoonIcon } from '@heroicons/react/24/solid';
 import Lottie from 'lottie-react';
 import loadingAnimation from '../animations/loading.json';
 
-// Configuración predeterminada para el icono del marcador en Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconUrl: markerIconPng,
@@ -25,25 +24,24 @@ L.Icon.Default.mergeOptions({
 });
 
 export const Weather = () => {
-  const { t, i18n } = useTranslation(); // Hook de traducción para el texto
-  const [city, setCity] = useState(localStorage.getItem('city') || ''); // Ciudad actual
-  const [debouncedCity, setDebouncedCity] = useState(city); // Ciudad con retraso de entrada
-  const [weatherData, setWeatherData] = useState(null); // Datos del clima actual
-  const [forecastData, setForecastData] = useState(null); // Datos de pronóstico extendido
-  const [hourlyForecastData, setHourlyForecastData] = useState(null); // Pronóstico por horas
-  const [error, setError] = useState(null); // Estado de error
-  const [unit, setUnit] = useState(localStorage.getItem('unit') || 'metric'); // Unidad de medida (Celsius/Fahrenheit)
+  const { t, i18n } = useTranslation();
+  const [city, setCity] = useState(localStorage.getItem('city') || '');
+  const [debouncedCity, setDebouncedCity] = useState(city);
+  const [weatherData, setWeatherData] = useState(null);
+  const [forecastData, setForecastData] = useState(null);
+  const [hourlyForecastData, setHourlyForecastData] = useState(null);
+  const [error, setError] = useState(null);
+  const [unit, setUnit] = useState(localStorage.getItem('unit') || 'metric');
   const [locationCoords, setLocationCoords] = useState(
     JSON.parse(localStorage.getItem('locationCoords')) || { lat: 51.505, lon: -0.09 }
-  ); // Coordenadas de la ubicación
-  const [loading, setLoading] = useState(true); // Estado de carga
+  );
+  const [loading, setLoading] = useState(true);
   const [favorites, setFavorites] = useState(
     JSON.parse(localStorage.getItem('favorites')) || []
-  ); // Lista de ubicaciones favoritas
-  const [selectedFavorite, setSelectedFavorite] = useState(null); // Ubicación favorita seleccionada
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light'); // Tema claro/oscuro
+  );
+  const [selectedFavorite, setSelectedFavorite] = useState(null);
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
-  // Realiza la geocodificación inversa para obtener el país basado en latitud y longitud
   const reverseGeocode = async (lat, lon) => {
     try {
       const response = await axios.get(
@@ -59,7 +57,6 @@ export const Weather = () => {
     }
   };
 
-  // Solicita permiso para notificaciones al montar el componente
   useEffect(() => {
     if (Notification.permission === 'default') {
       Notification.requestPermission().then((permission) => {
@@ -68,7 +65,6 @@ export const Weather = () => {
     }
   }, []);
 
-  // Obtiene la ubicación actual del usuario usando geolocalización
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -91,7 +87,6 @@ export const Weather = () => {
     );
   }, []);
 
-  // Delay en la actualización de la ciudad para optimizar el rendimiento
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedCity(city);
@@ -102,7 +97,6 @@ export const Weather = () => {
     };
   }, [city]);
 
-  // Fetch de los datos del clima y pronóstico
   const fetchWeatherAndForecast = useCallback(async () => {
     try {
       const weather = locationCoords
@@ -139,12 +133,10 @@ export const Weather = () => {
     }
   }, [debouncedCity, unit, locationCoords, fetchWeatherAndForecast]);
 
-  // Maneja el click en el mapa para obtener nueva ubicación
   const handleMapClick = async (lat, lon) => {
     setLocationCoords({ lat, lon });
     localStorage.setItem("locationCoords", JSON.stringify({ lat, lon }));
   
-    // Realizar geocodificación inversa para obtener el nombre del país
     const countryName = await reverseGeocode(lat, lon);
     if (countryName) {
       setCity(countryName);
@@ -153,13 +145,11 @@ export const Weather = () => {
     }
   }; 
 
-  // Cambia la unidad de medida y la guarda en localStorage
   const handleUnitChange = (newUnit) => {
     setUnit(newUnit);
     localStorage.setItem('unit', newUnit);
   };
 
-  // Cambia el tema entre claro y oscuro
   const handleThemeToggle = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
@@ -167,12 +157,10 @@ export const Weather = () => {
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  // Cambia el idioma de la aplicación
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };
 
-  // Agrega una ciudad a favoritos si no está ya en la lista
   const handleAddToFavorites = () => {
     if (city && !favorites.some(fav => fav.city === city)) {
       const newFavorite = { city, coords: locationCoords, weatherData };
@@ -182,21 +170,18 @@ export const Weather = () => {
     }
   };
 
-  // Elimina una ciudad de la lista de favoritos
   const handleRemoveFromFavorites = (cityName) => {
     const updatedFavorites = favorites.filter(fav => fav.city !== cityName);
     setFavorites(updatedFavorites);
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
 
-  // Actualiza la información al hacer clic en una ubicación favorita
   const handleFavoriteClick = async (favorite) => {
     setLocationCoords(favorite.coords);
     setCity(favorite.city);
     setDebouncedCity(favorite.city);
     setSelectedFavorite(favorite.city);
 
-    // Fetch de datos de clima para la ubicación favorita
     try {
       const weather = await fetchWeatherData('', favorite.coords.lat, favorite.coords.lon, unit);
       const forecast = await fetchForecastData('', favorite.coords.lat, favorite.coords.lon, unit);
@@ -208,10 +193,8 @@ export const Weather = () => {
     }
   };
 
-  // Referencia para el mapa (React Ref)
   const mapRef = useRef(null);
 
-  // Ajusta el tamaño del mapa cuando cambia la ubicación
   useEffect(() => {
     if (mapRef.current) {
       setTimeout(() => {
@@ -220,7 +203,6 @@ export const Weather = () => {
     }
   }, [locationCoords]);
 
-  // Aplica el tema a nivel global en el HTML
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
@@ -243,7 +225,6 @@ export const Weather = () => {
         exit={{ opacity: 0 }}
       >{t('weatherApp')}</motion.h1>
 
-      {/* Controles de cambio de tema e idioma */}
       <div className="fixed bottom-4 right-4 flex flex-col justify-between items-center space-y-2 z-50">
         <motion.button
           onClick={handleThemeToggle}
@@ -299,7 +280,6 @@ export const Weather = () => {
 
       {!loading && (
         <>
-          {/* Sección de favoritos y control de unidades */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
             <motion.div 
               className="lg:col-span-1"
@@ -409,9 +389,9 @@ export const Weather = () => {
               <MapContainer
                 center={[locationCoords.lat, locationCoords.lon]}
                 zoom={10}
-                minZoom={3} // Zoom mínimo para evitar zoom out excesivo y duplicación
-                maxBounds={[[-85, -180], [85, 180]]} // Limita los bordes del mapa al mundo visible
-                maxBoundsViscosity={1.0} // Hace "pegajosos" los límites para evitar salir del área visible
+                minZoom={3}
+                maxBounds={[[-85, -180], [85, 180]]}
+                maxBoundsViscosity={1.0}
                 whenCreated={(mapInstance) => {
                   mapRef.current = mapInstance;
                   mapInstance.invalidateSize();
@@ -480,7 +460,6 @@ export const Weather = () => {
   );
 };
 
-// Componente para manejar clics en el mapa
 const MapClickHandler = ({ onMapClick }) => {
   useMapEvents({
     click: (e) => {

@@ -11,64 +11,57 @@ import fogAnimation from '../../animations/fog.json';
 import nightClearAnimation from '../../animations/nightClear.json';
 import nightCloudyAnimation from '../../animations/nightCloudy.json';
 
-// Función para determinar si es de día o de noche
-// Recibe la hora en formato de 24 horas y devuelve true si está entre 6 AM y 6 PM (día)
 const isDayTime = (hora) => {
-  return hora >= 6 && hora < 18; // Día entre 6 AM y 6 PM
+  return hora >= 6 && hora < 18;
 };
 
-// Función para obtener la animación basada en la condición climática y la hora del día
-// Recibe la condición climática y un booleano que indica si es de día
-// Retorna la animación correspondiente
 const getWeatherAnimation = (weatherCondition, dayTime) => {
   if (dayTime) {
-    // Animaciones de día
+
     switch (weatherCondition) {
       case 'Clear':
-        return sunAnimation; // Sol durante el día
+        return sunAnimation;
       case 'Clouds':
-        return cloudyAnimation; // Nubes durante el día
+        return cloudyAnimation;
       case 'Rain':
-        return rainAnimation; // Lluvia
+        return rainAnimation;
       case 'Snow':
-        return snowAnimation; // Nieve
+        return snowAnimation;
       case 'Thunderstorm':
-        return thunderstormAnimation; // Tormenta eléctrica
+        return thunderstormAnimation;
       case 'Fog':
-        return fogAnimation; // Niebla
+        return fogAnimation;
       case 'Mist':
-        return fogAnimation; // Niebla
+        return fogAnimation;
       default:
-        return cloudyAnimation; // Animación por defecto para climas no especificados (nubes)
+        return cloudyAnimation;
     }
   } else {
-    // Animaciones de noche
+
     switch (weatherCondition) {
       case 'Clear':
-        return nightClearAnimation; // Noche despejada (luna)
+        return nightClearAnimation;
       case 'Clouds':
-        return nightCloudyAnimation; // Noche nublada
+        return nightCloudyAnimation;
       case 'Rain':
-        return rainAnimation; // Lluvia (igual de día o de noche)
+        return rainAnimation;
       case 'Snow':
-        return snowAnimation; // Nieve (igual de día o de noche)
+        return snowAnimation;
       case 'Thunderstorm':
-        return thunderstormAnimation; // Tormenta eléctrica (igual de día o de noche)
+        return thunderstormAnimation;
       case 'Fog':
-        return fogAnimation; // Niebla (igual de día o de noche)
+        return fogAnimation;
       case 'Mist':
-        return fogAnimation; // Niebla (igual de día o de noche)
+        return fogAnimation;
       default:
-        return nightCloudyAnimation; // Animación por defecto para climas no especificados (nubes nocturnas)
+        return nightCloudyAnimation;
     }
   }
 };
 
-// Componente para mostrar el pronóstico por hora
-// Recibe forecastData (datos del pronóstico), unit (unidad de temperatura) y theme (tema oscuro o claro)
 export const HourlyForecastDisplay = ({ forecastData, unit, theme }) => {
-  const { t } = useTranslation(); // Hook para manejar traducciones
-  const temperatureUnit = unit === 'metric' ? '°C' : '°F'; // Define la unidad de temperatura
+  const { t } = useTranslation();
+  const temperatureUnit = unit === 'metric' ? '°C' : '°F';
 
   return (
     <>
@@ -82,27 +75,22 @@ export const HourlyForecastDisplay = ({ forecastData, unit, theme }) => {
         <h2 className="text-lg font-bold mb-4">{t('hourlyForecast')}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {forecastData?.list?.slice(0, 12).map((forecast, index) => {
-            const forecastTime = forecast.dt * 1000; // Convierte el tiempo del pronóstico a milisegundos
-            const hora = new Date(forecastTime).getHours(); // Obtiene la hora en formato de 24 horas
-            const dayTime = isDayTime(hora); // Determina si es de día o noche
-            const weatherCondition = forecast.weather[0].main; // Obtiene la condición climática
-            const animationData = getWeatherAnimation(weatherCondition, dayTime); // Obtiene la animación correspondiente
+            const forecastTime = forecast.dt * 1000;
+            const hora = new Date(forecastTime).getHours();
+            const dayTime = isDayTime(hora);
+            const weatherCondition = forecast.weather[0].main;
+            const animationData = getWeatherAnimation(weatherCondition, dayTime);
 
-            // Verifica si la animación es de tipo "nightCloudyAnimation" o "fogAnimation"
-            // Si es así, aplica un filtro de oscuridad para mejorar el contraste
             const darkenStyle = animationData === nightCloudyAnimation || animationData === fogAnimation
-              ? { filter: 'brightness(0.8)' } // Aplica filtro de oscuridad
+              ? { filter: 'brightness(0.8)' }
               : {};
 
             return (
               <div key={index} className={`p-4 rounded-lg shadow-md ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'}`}>
-                {/* Hora del pronóstico */}
                 <p className="text-sm mb-2">{new Date(forecastTime).toLocaleTimeString()}</p>
                 
-                {/* Animación Lottie con la condición y el filtro opcional */}
                 <Lottie animationData={animationData} loop={true} style={{ width: 80, height: 80, ...darkenStyle }} />
                 
-                {/* Temperatura del pronóstico */}
                 <p className="text-lg font-semibold mt-2">{forecast.main.temp} {temperatureUnit}</p>
               </div>
             );

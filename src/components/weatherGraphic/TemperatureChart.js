@@ -8,7 +8,7 @@ import { Chart, CategoryScale, LinearScale, LineElement, PointElement, LineContr
 Chart.register(CategoryScale, LinearScale, LineElement, PointElement, LineController, Title, Tooltip, Legend);
 
 const TemperatureChart = ({ unit, theme }) => {
-    const { t } = useTranslation(); // Hook para la traducción
+    const { t } = useTranslation();
     const [chartData, setChartData] = useState({ datasets: [], labels: [] });
     const chartRef = useRef(null);
   
@@ -55,7 +55,6 @@ const TemperatureChart = ({ unit, theme }) => {
 
     const isDarkMode = theme === 'dark';
 
-    // Configuración de estilos basada en el tema
     const textColor = isDarkMode ? 'white' : 'black';
     const backgroundColor = isDarkMode ? '#1f2937' : '#ffffff';
   
@@ -111,18 +110,18 @@ const TemperatureChart = ({ unit, theme }) => {
                           ...dataset,
                           borderColor:
                               index === 0
-                                  ? theme === 'dark' ? '#4F46E5' : '#3B82F6' // Color para "Temperatura Diaria"
+                                  ? theme === 'dark' ? '#4F46E5' : '#3B82F6'
                                   : index === 1
-                                  ? theme === 'dark' ? '#10B981' : '#16A34A' // Color para "Temperatura Promedio"
-                                  : theme === 'dark' ? '#EF4444' : '#F87171', // Color para "Desviación Estándar"
+                                  ? theme === 'dark' ? '#10B981' : '#16A34A'
+                                  : theme === 'dark' ? '#EF4444' : '#F87171',
                           pointBackgroundColor:
                               index === 0
                                   ? theme === 'dark' ? '#4F46E5' : '#3B82F6'
                                   : index === 1
                                   ? theme === 'dark' ? '#10B981' : '#16A34A'
                                   : theme === 'dark' ? '#EF4444' : '#F87171',
-                          borderDash: index > 0 ? [5, 5] : undefined, // Para líneas de desviación
-                          borderWidth: index === 0 ? 2 : 1.5, // Diferencia de grosor
+                          borderDash: index > 0 ? [5, 5] : undefined,
+                          borderWidth: index === 0 ? 2 : 1.5,
                       })),
                     }}
                     options={{
@@ -193,7 +192,7 @@ const TemperatureChart = ({ unit, theme }) => {
                         beginAtZero: false,
                         ticks: {
                           color: theme === 'dark' ? 'white' : 'black',
-                          stepSize: 5, // Puedes ajustar este valor según el rango
+                          stepSize: 5,
                         },
                         grid: {
                           color: theme === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(128, 128, 128, 0.3)',
@@ -211,7 +210,7 @@ const TemperatureChart = ({ unit, theme }) => {
                     }}
                     className="p-4 rounded-lg"
                     style={{
-                    backgroundColor: theme === 'dark' ? '#111827' : '#F9FAFB', // Fondo del gráfico en modo oscuro
+                    backgroundColor: theme === 'dark' ? '#111827' : '#F9FAFB',
                     borderRadius: '8px',
                     padding: '20px'
                     }}

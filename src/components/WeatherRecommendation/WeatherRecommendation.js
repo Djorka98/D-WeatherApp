@@ -2,18 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
-// Componente WeatherRecommendation - muestra recomendaciones personalizadas
-// en función de las condiciones meteorológicas actuales y el tema visual (claro/oscuro)
 export const WeatherRecommendation = ({ weatherData, theme }) => {
-  const { t } = useTranslation(); // Hook para la traducción de textos
+  const { t } = useTranslation();
 
-  // Si los datos meteorológicos son insuficientes o están ausentes, no renderiza nada
   if (!weatherData || !weatherData.main || !weatherData.weather) return null;
 
-  // Variable para almacenar la recomendación en función de las condiciones
   let recommendation = '';
 
-  // Condiciones de temperatura con recomendaciones de ropa y precauciones
   if (weatherData.main.temp < 10) {
     recommendation = t("recommendation1");
   } else if (weatherData.main.temp < 20) {
@@ -24,7 +19,6 @@ export const WeatherRecommendation = ({ weatherData, theme }) => {
     recommendation = t("recommendation4");
   }
 
-  // Condiciones adicionales para lluvia, viento, humedad, y otras situaciones específicas
   if (weatherData.weather.some((condition) => condition.main === 'Rain')) {
     recommendation += t("recommendation5");
   }
@@ -53,7 +47,6 @@ export const WeatherRecommendation = ({ weatherData, theme }) => {
     recommendation += t("recommendation11");
   }
 
-  // Renderizado de la sección de recomendaciones
   return (
     <>
       <motion.div className={`mt-4 p-6 rounded-lg shadow-md transition-all duration-300 ${theme === 'dark' ? 'bg-gray-700 text-gray-100' : 'bg-blue-50 text-gray-900'}`}

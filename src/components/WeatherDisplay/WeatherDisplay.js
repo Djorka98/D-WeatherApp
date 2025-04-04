@@ -11,30 +11,20 @@ import fogAnimation from '../../animations/fog.json';
 import nightClearAnimation from '../../animations/nightClear.json';
 import nightCloudyAnimation from '../../animations/nightCloudy.json';
 
-/**
- * Componente principal para mostrar el clima actual.
- * Incluye la animación y detalles del clima.
- * @param {Object} props - Propiedades del componente.
- * @param {Object} props.weatherData - Datos del clima actual.
- * @param {string} props.unit - Unidad de temperatura ('metric' o 'imperial').
- * @param {string} props.theme - Tema actual ('dark' o 'light').
- */
 export const WeatherDisplay = ({ weatherData, unit, theme }) => {
-  const { t } = useTranslation(); // Hook para la traducción
+  const { t } = useTranslation();
 
-  // Verifica si no hay datos de clima y, en ese caso, no muestra nada
   if (!weatherData) {
     return null;
   }
 
-  const weatherCondition = weatherData.weather[0].main; // Obtiene el tipo de clima del pronóstico actual
-  const temperatureUnit = unit === 'metric' ? '°C' : '°F'; // Define la unidad de temperatura
+  const weatherCondition = weatherData.weather[0].main;
+  const temperatureUnit = unit === 'metric' ? '°C' : '°F';
 
-  // Calcula si es de día o de noche basado en la hora actual y los tiempos de amanecer y atardecer
-  const currentTime = new Date().getTime() / 1000; // Convierte el tiempo actual a segundos UNIX
-  const isDayTime = currentTime > weatherData.sys.sunrise && currentTime < weatherData.sys.sunset; // Comprueba si es de día
+  const currentTime = new Date().getTime() / 1000;
+  const isDayTime = currentTime > weatherData.sys.sunrise && currentTime < weatherData.sys.sunset;
 
-  const darkenStyle = { filter: 'brightness(0.8)' }; // Oscurecer animaciones 
+  const darkenStyle = { filter: 'brightness(0.8)' };
 
   return (
     <>
@@ -46,7 +36,6 @@ export const WeatherDisplay = ({ weatherData, unit, theme }) => {
         exit={{ opacity: 0 }}
       >
         <div className={`p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center md:justify-start transition-all duration-300 space-y-6 md:space-y-0 md:space-x-8 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-gray-50 text-gray-900'}`}>
-          {/* Sección de información textual sobre el clima */}
           <div className="flex flex-col items-center md:items-start w-full md:w-1/2 lg:w-1/3 xl:w-1/3 2xl:w-1/4 space-y-4">
             <h2 className="text-3xl font-bold">
               {weatherData.name}, {weatherData.sys.country}
@@ -68,7 +57,6 @@ export const WeatherDisplay = ({ weatherData, unit, theme }) => {
             </p>
           </div> 
 
-          {/* Sección de animación basada en el tipo de clima y la hora del día */}
           <div className="mt-4 md:mt-0 flex justify-center md:justify-start w-full md:w-1/2">
             {weatherCondition === 'Rain' && (
               <Lottie animationData={rainAnimation} loop={true} style={{ width: 150, height: 150 }} />
